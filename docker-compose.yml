@@ -1,0 +1,28 @@
+services:
+  app:
+    build: .
+    container_name: lost_and_found_app
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=${PORT:-3000}
+      - MONGODB_URI=mongodb://${MONGO_USER:-root}:${MONGO_PASSWORD:-awesomepassword123}@mongodb:27017/sit725-group-88?authSource=admin
+    depends_on:
+      - mongodb
+    command: [ "npm", "start" ]
+    restart: always
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-awesomepassword123}
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
