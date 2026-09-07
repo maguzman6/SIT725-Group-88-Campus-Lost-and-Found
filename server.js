@@ -4,6 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 
+const studentRoutes = require("./routes/student");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -18,6 +20,9 @@ app.use(express.json());
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "public")));
+
+// API Student Route
+app.use("/api/student", studentRoutes);
 
 // Temporary in-memory storage
 const items = [];
