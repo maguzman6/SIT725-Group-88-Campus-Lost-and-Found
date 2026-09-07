@@ -11,6 +11,8 @@ services:
       - mongodb
     command: [ "npm", "start" ]
     restart: always
+    networks:
+      - app-network
 
   mongodb:
     image: mongo:latest
@@ -23,6 +25,12 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-awesomepassword123}
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - app-network
 
 volumes:
   mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge
