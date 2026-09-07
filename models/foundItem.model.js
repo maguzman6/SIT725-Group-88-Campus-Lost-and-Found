@@ -5,7 +5,12 @@ const foundItemSchema = new mongoose.Schema(
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
+    },
+    type: {
+      type: String,
+      enum: ["lost", "found"],
+      default: "found",
     },
     title: {
       type: String,
@@ -22,33 +27,49 @@ const foundItemSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
     foundAt: {
       type: Date,
-      required: true,
+      default: Date.now,
+    },
+    location: {
+      type: String,
+      trim: true,
     },
     campusLocation: {
       type: String,
-      required: true,
+      trim: true,
+    },
+    campus: {
+      type: String,
+      trim: true,
+    },
+    building: {
+      type: String,
+      trim: true,
+    },
+    room: {
+      type: String,
       trim: true,
     },
     photos: {
       type: [String],
       validate: {
-        validator: (photos) => photos.length <= 3,
+        validator: (photos) => !photos || photos.length <= 3,
         message: "A found item report can contain up to three photos.",
       },
     },
     contactMethod: {
       type: String,
-      required: true,
       enum: ["email", "collection"],
+      default: "email",
     },
     collectionLocation: {
       type: String,
       trim: true,
-      required() {
-        return this.contactMethod === "collection";
-      },
     },
     status: {
       type: String,

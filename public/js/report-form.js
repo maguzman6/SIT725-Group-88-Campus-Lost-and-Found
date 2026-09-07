@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // function to execute on report submission
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             // Collect all form fields
@@ -61,15 +61,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 handoverMethod: document.querySelector('input[name="handoverMethod"]:checked')?.value || null
             };
 
-            console.log('Report submission data:', reportData);
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reportData)
+                });
 
-            // API CALL SHOULD BE HERE
-            alert('Report submitted successfully!');
-            form.reset();
+                if (response.ok) {
+                    alert('Report submitted successfully to database!');
+                    form.reset();
 
-            // Re-initialize default date after reset
-            if (dateInput) {
-                dateInput.value = new Date().toISOString().split('T')[0];
+                    // Re-initialize default date after reset
+                    if (dateInput) {
+                        dateInput.value = new Date().toISOString().split('T')[0];
+                    }
+                } else {
+                    const errData = await response.json().catch(() => ({}));
+                    alert('Error submitting report: ' + (errData.message || 'Please check all required fields.'));
+                }
+            } catch (error) {
+                console.error('Error submitting report:', error);
+                alert('Network error: unable to reach server.');
             }
         });
     }
